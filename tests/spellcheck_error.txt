@@ -1,0 +1,40 @@
+# 格式: 错误的 Token,完整的 Token
+# 说明: 错误的 token 必填，完整的 Token 可选，存在完整的 Token 只修正完整的 Token 关联的错误
+# 注释: 行首添加 # 表示跳过该错误的 Token 修复
+
+Foo,Foo
+foo,foo
+Foo,Foo1
+Foo,Foo1True
+Foo,Foo2
+foo,foo2
+Foo,Foo2True
+Foo,Foo4
+Foo,FooN
+Foo,Foop
+Foo,FooTrue
+foo,fooTrue
+Foo,Foo_2
+Foo,Foo_True
+foo,foo_true
+foo,NSfoo
+Foo,True2Foo
+Foo,TrueFoo
+Foo,TrueFooFalse
+Foo,True_Foo
+foo,true_foo
+fooa,fooa
+fook,fook_url
+fook,_fook
+fook,_fook_url
+Foop,Foop
+foop,foop
+foop,foop1
+foop,foopTrue
+Foop,getFoop
+Foop,setFoop
+Foop,setFoop2
+foop,_foop
+foopp,foopp
+jpg,jpg
+Sfoo,NSfoo

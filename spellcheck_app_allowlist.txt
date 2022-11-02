@@ -1,0 +1,7 @@
+# allowlist 是 ${token} 白名单列表，区别于 *.dic 的单词白名单列表，区分大小写
+# 例如, arry 可能是 Larry 也可能是 array，因此在 *.dic 单词白名单列表过滤之后，增加一轮 ${token} 过滤策略
+# 白名单列表，如果包含 ${word} 代表检查错误 token，将使用正则匹配，否则使用字符串匹配
+SaaS
+Larry
+JSONify
+${word}(?<=i)(OS|Phone|Pad|Cloud)

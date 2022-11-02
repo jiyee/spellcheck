@@ -1,0 +1,14 @@
+spellcheck.*.txt
+*.tmp.txt
+*.cpp.txt
+*.step*.txt
+*.result.txt
+*.oclint.txt
+*.oclint.csv
+*_oclint_report.json
+*.bits_file_list.txt
+*_Allowlist.dic
+tmp-*/
+local/
+spellcheck/
+tests/spellcheck/
