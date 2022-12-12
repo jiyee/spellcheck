@@ -155,7 +155,7 @@ if [[ "${SCAN_LANG}" == "ios" ]] \
   || [[ "${SCAN_LANG}" == "objc" ]] \
   || [[ "${SCAN_LANG}" == "swift" ]]; then
   SCAN_FILE_EXTS=(".h" ".m" ".mm" ".c" ".cc" ".hpp" ".cpp" ".swift")
-  SCAN_FILE_EXCLUDES=("*.pbobjc.h" "*ApiModel.h" "*GTMNSString+HTML.h" "*.pbobjc.m" "*ApiModel.m" "*GTMNSString+HTML.m")
+  SCAN_FILE_EXCLUDES=("*.pbobjc.h" "*GTMNSString+HTML.h" "*.pbobjc.m" "*GTMNSString+HTML.m")
 elif [[ "${SCAN_LANG}" == "android" ]] \
   || [[ "${SCAN_LANG}" == "java" ]] \
   || [[ "${SCAN_LANG}" == "kotlin" ]] \
@@ -163,6 +163,12 @@ elif [[ "${SCAN_LANG}" == "android" ]] \
   SCAN_FILE_EXTS=(".java" ".kt" ".kts")
   SCAN_FILE_EXCLUDES=()
 fi
+
+# TODO 自定义 ObjC 类名前缀
+readonly SCAN_OBJC_PREFIX='(TT|Tt|tt|TV|BD|Bd|bd|XG|Xg|xg|TSV|TIM|TMA)'
+# TODO 自定义动态白名单地址 
+readonly SCAN_WHITELIST_URL='https://localhost/spellcheck_bits_allowlist'
+
 
 readonly SCAN_FIND_GLOB=$(for SCAN_FILE_EXT in ${SCAN_FILE_EXTS[*]}; do echo -n "-iname '*$SCAN_FILE_EXT' -or "; done)
 readonly SCAN_FIND_EXCLUDE_GLOB=$(for SCAN_FILE_EXCLUDE in ${SCAN_FILE_EXCLUDES[*]}; do echo -n "! -iname '$SCAN_FILE_EXCLUDE' -and "; done)
@@ -248,7 +254,7 @@ function extract_tokens() {
   | perl -pe 's/^[ \s\t]*\*.*$//g' \
   | perl -pe 's/"[0-9a-zA-Z\,\:\;\/\\\.\_\-\=\+\~\?\|]{50,}"//g' \
   | perl -pe 's/^\.\/\/.*\.(h|m|mm)$//g' \
-  | perl -pe 's/"(http|https|sslocal|snssdk)[^"]+"//g' \
+  | perl -pe 's/"(http|https)[^"]+"//g' \
   | perl -pe 's/"(0x|#)[a-zA-Z0-9]{2,}"//g' \
   | perl -pe 's/"[a-fA-F0-9]{6}"//g' \
   | perl -pe 's/"[a-fA-F0-9]{8}"//g' \
@@ -283,7 +289,7 @@ function extract_words() {
   | grep -vE '^[A-Z]{2,}s$' \
   | grep -vE '^[A-Z]{2,}Is$' \
   | perl -pe 's/^([A-Z]+)([A-Z][a-z]*)$/\2/g' \
-  | grep -vE '^(TT|Tt|tt|TV|BD|Bd|bd|XG|Xg|xg)[a-zA-Z]{1,3}|(TSV|TIM|TMA)[a-zA-Z]{1,2}$' \
+  | grep -vE "^${SCAN_OBJC_PREFIX}[a-zA-Z]{1,3}$" \
   | grep -E '^.{4,}$' \
   | sort \
   | uniq \
@@ -296,7 +302,7 @@ function download_bits_allowlist() {
   # 下载 Bits_Allowlist.dic，Bits 手动误报的白名单
   
   rm Bits_Allowlist.dic 2>/dev/null
-  curl "https://noop.com/spellcheck_bits_allowlist" --retry 1 --silent --output "${BASE_DIR}/Bits_Allowlist.dic" # 手动替换白名单链接
+  curl "${SCAN_WHITELIST_URL}" --retry 1 --silent --output "${BASE_DIR}/Bits_Allowlist.dic"
   
   if [[ "$OSTYPE" == "darwin"* ]]; then
     mkdir -p ~/Library/Spelling

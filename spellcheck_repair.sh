@@ -386,7 +386,7 @@ function scan_source_code_import_misspelling() {
       echo "# $word" | tee -a "$SPELLCHECK_EXEC_LOG_FILE"
       rg "${token_regexp}" --pcre2 --type objc --type objcpp --type swift --files-with-matches "${SOURCE_CODE_DIR}" | while read -r file; do
 
-        if [[ $file =~ (pbobjc|ApiModel)\.[hm]$ ]] || [[ $file =~ /.*\/Example\/.*/ ]]; then
+        if [[ $file =~ (pbobjc)\.[hm]$ ]] || [[ $file =~ /.*\/Example\/.*/ ]]; then
           continue
         fi
 
@@ -395,8 +395,6 @@ function scan_source_code_import_misspelling() {
         else
           exclude_line=""
         fi
-        
-        # TODO 输出 exlcude 地方，便于后续修复
         
         if [[ "$file" =~ swift$ ]]; then
           echo "perl -i -pe \"${exclude_line}s/$token_regexp/$replace_regexp/g if /^\s*import\s+/\" $file" | tee -a "$SPELLCHECK_EXEC_LOG_FILE"
@@ -412,7 +410,7 @@ function scan_source_code_import_misspelling() {
 
 ############################### 以上是目录和文件名处理的部分 #######################################
 
-# 准备 exclude 目录头文件，例如 Pods 目录头文件，pbobjc, ApiModel 等 IDL 自动生成的文件
+# 准备 exclude 目录头文件，例如 Pods 目录头文件，pbobjc 等 IDL 自动生成的文件
 function prepare_path_exclude_header_file() {
   echo "### [BEGIN] PREPARE PATH EXCLUDE HEADER FILE ###" | tee -a "$SPELLCHECK_EXEC_LOG_FILE"
   if [[ ! -e "${TMP_DIR}/exclude_header_files.txt" ]]; then
@@ -422,7 +420,7 @@ function prepare_path_exclude_header_file() {
   if [[ -e "${EXCLUDE_DIR}" ]] && [[ -d "${EXCLUDE_DIR}" ]]; then
     fd -L -e h -t f . "${EXCLUDE_DIR}" --exec echo {/.} >> "${TMP_DIR}/exclude_header_files.txt"
   fi
-  fd -s -e h -t f "(pbobjc|ApiModel)" "${SOURCE_CODE_DIR}" --exec echo {/.} >> "${TMP_DIR}/exclude_header_files.txt"
+  fd -s -e h -t f "(pbobjc)" "${SOURCE_CODE_DIR}" --exec echo {/.} >> "${TMP_DIR}/exclude_header_files.txt"
   
   if [[ -e "${TMP_DIR}/exclude_header_files.txt" ]]; then
     cat "${TMP_DIR}/exclude_header_files.txt" \
@@ -444,12 +442,8 @@ function prepare_exclude_header_file() {
     fd -L -e h -t f . "${EXCLUDE_DIR}" --exec echo {/.} >> "${TMP_DIR}/exclude_header_files.txt"
     fd -L -e h -t f . "${EXCLUDE_DIR}" --exec cat {} >> "${TMP_DIR}/exclude_header_files.txt"
   fi
-  fd -s -e h -t f "(pbobjc|ApiModel)" "${SOURCE_CODE_DIR}" --exec echo {/.} >> "${TMP_DIR}/exclude_header_files.txt"
-  fd -s -e h -t f "(pbobjc|ApiModel)" "${SOURCE_CODE_DIR}" --exec cat {} >> "${TMP_DIR}/exclude_header_files.txt"
-  
-  if [[ -e "${SOURCE_CODE_DIR}/TTUGCApiGateway" ]]; then
-    fd -s -e h -t f . "${SOURCE_CODE_DIR}/TTUGCApiGateway" --exec cat {} >> "${TMP_DIR}/exclude_header_files.txt"
-  fi
+  fd -s -e h -t f "(pbobjc)" "${SOURCE_CODE_DIR}" --exec echo {/.} >> "${TMP_DIR}/exclude_header_files.txt"
+  fd -s -e h -t f "(pbobjc)" "${SOURCE_CODE_DIR}" --exec cat {} >> "${TMP_DIR}/exclude_header_files.txt"
   
   if [[ -e "${TMP_DIR}/exclude_header_files.txt" ]]; then
     cat "${TMP_DIR}/exclude_header_files.txt" \
@@ -615,7 +609,7 @@ function scan_source_code_misspelling() {
     echo "# $orig_word in ${search_regexp}" | tee -a "$SPELLCHECK_EXEC_LOG_FILE"
     rg "${search_regexp}" --pcre2 --type objc --type objcpp --type swift --files-with-matches "${SOURCE_CODE_DIR}" | while read -r file; do
       
-      if [[ $file =~ (pbobjc|ApiModel)\.[hm]$ ]] || [[ $file =~ /.*\/Example\/.*/ ]]; then
+      if [[ $file =~ (pbobjc)\.[hm]$ ]] || [[ $file =~ /.*\/Example\/.*/ ]]; then
         continue
       fi
       

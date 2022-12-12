@@ -1,6 +1,6 @@
 # Spell Check
 
-朴素，但通用的 Spell Check 检查和修复工具，基于 [hunspell](https://github.com/hunspell/hunspell) 实现，用于本地和 CI 检查常见的拼写错误。欢迎 PR 贡献。
+朴素，但通用的 Spell Check 拼写检查和修复工具，基于 [hunspell](https://github.com/hunspell/hunspell) 实现，用于本地和 CI 检查常见的拼写错误，欢迎 PR 贡献。
 
 ## 文件说明
 
@@ -37,6 +37,8 @@
 git clone https://github.com/jiyee/spellcheck.git ~/
 cd <path_of_component>
 ln -s ~/spellcheck/spellcheck.sh ./
+
+# 本地检查
 ./spellcheck.sh -n "<component_name>" -d ./
 # 第一次使用，推荐以下方式，生成并打开结果预览文件
 ./spellcheck.sh -n "<component_name>" -d ./ -p # 生成结果预览文件
